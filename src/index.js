@@ -18,7 +18,7 @@ var questions = [
         type: 'list',
         name: 'mode',
         message: 'Choose an option:',
-        choices: ['Input', 'Output'],
+        choices: ['Output', 'Input'],
         filter: value => value.toLowerCase()
     }
 ];

@@ -1,9 +1,10 @@
-const inquirer = require('inquirer');
-const path = require('path');
+const inquirer = require('inquirer')
+const path = require('path')
 const fs = require('fs-extra')
 
-const STORAGE_PATH = path.join(__dirname, '..', 'data', 'storage.json');
-const data = fs.readJsonSync(STORAGE_PATH);
+const STORAGE_PATH = path.join(__dirname, '..', 'data', 'storage.json')
+const data = fs.readJsonSync(STORAGE_PATH)
+const output = require('./output')
 
 var questions = [
     {
@@ -29,18 +30,23 @@ var questions = [
         validate: value => !isNaN(parseInt(value)) || 'Please enter a number',
         filter: Number
     }
-];
+]
 
 function start() {
     inquirer.prompt(questions).then(answers => {
+        const matchDate = new Date()
+        matchDate.setHours(matchDate.getHours() - 3);
+
         data[answers.type].push({
             mmr: answers.mmr,
             match_id: answers.match_id,
-            ts: new Date().toISOString()
+            ts: matchDate.toISOString()
         })
 
         fs.writeJsonSync(STORAGE_PATH, data)
-    });
+
+        output({ type: answers.type })
+    })
 }
 
-module.exports = start;
+module.exports = start
