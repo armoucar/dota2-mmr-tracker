@@ -38,18 +38,24 @@ function start(answers) {
 function printData(answers) {
     const data = fs.readJsonSync(STORAGE_PATH)
 
-    let lastMedalRef
+    let lastMedalRef,
+        balance = 0;
 
     data[answers.type].forEach(function (match, index, arr) {
         const diff = index > 0 ? (arr[index].mmr - arr[index - 1].mmr) : 0
         match.diff = diff
         match.ts = match.ts.substring(0, 16).replace(/t/gi, ' ')
 
+        if (diff) {
+            balance += diff > 0 ? 1 : -1;
+        }
+
         t.cell('ID', index + 1)
         t.cell('Match ID', match.match_id, Table.number())
         t.cell('Date', match.ts)
         t.cell('MMR', match.mmr, Table.number())
         t.cell('Diff', match.diff, diffFn)
+        t.cell('Balance', balance, value => Table.padLeft(value < 0 ? chalk.red(value) : chalk.blue(value), 7))
 
         if (match.up_medal) {
             let mmrMedalDiff = '',
@@ -61,7 +67,9 @@ function printData(answers) {
             }
 
             t.cell('Medal', chalk.bold(mmrMedalDiff.length ? mmrMedalDiff : ' *'))
+
             lastMedalRef = match
+            balance = 0
         } else {
             t.cell('Medal', ' -')
         }
