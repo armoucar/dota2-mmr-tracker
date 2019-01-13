@@ -16,11 +16,9 @@ var questions = [
     },
 
     {
-        type: 'input',
+        type: 'confirm',
         name: 'mmr',
-        message: 'What\'s your MMR now?',
-        validate: value => !isNaN(parseInt(value)) || 'Please enter a number',
-        filter: Number
+        message: 'Did you win?',
     },
 
     {
@@ -37,8 +35,10 @@ function start() {
         const matchDate = new Date()
         matchDate.setHours(matchDate.getHours() - 3);
 
+        debugger;
+
         data[answers.type].push({
-            mmr: answers.mmr,
+            mmr: answers.mmr ? data[answers.type][data[answers.type].length - 1].mmr + 25 : data[answers.type][data[answers.type].length - 1].mmr - 25,
             match_id: answers.match_id,
             ts: matchDate.toISOString()
         })
